@@ -1,0 +1,50 @@
+{
+  "name": "js-rollbar-eb-deploy-notifier",
+  "version": "0.0.1",
+  "description": "A package for notifying Rollbar of deploys made to Elastic Beanstalk",
+  "main": "index.js",
+  "scripts": {
+    "eslint-check": "eslint --print-config .eslintrc.js --ignore-pattern ./.eslintrc.js | eslint-config-prettier-check",
+    "lint": "eslint \"**/*.js\" --ignore-pattern ./.eslintrc.js",
+    "lint-diff": "git diff --name-only --cached --relative | grep \\\\.js$ | xargs eslint",
+    "lint-fix": "eslint \"**/*.js\" --fix --ignore-pattern ./.eslintrc.js",
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SantiagoFoster/js-rollbar-eb-deploy-notifier.git"
+  },
+  "keywords": [
+    "express",
+    "expressjs",
+    "elastic",
+    "beanstalk",
+    "eb",
+    "elasticbeanstalk",
+    "rollbar",
+    "deploy",
+    "node",
+    "nodejs",
+    "wolox"
+  ],
+  "author": "Wolox",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SantiagoFoster/js-rollbar-eb-deploy-notifier/issues"
+  },
+  "homepage": "https://github.com/SantiagoFoster/js-rollbar-eb-deploy-notifier#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-diff"
+    }
+  },
+  "dependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-wolox": "^2.3.0",
+    "eslint-config-wolox-node": "^1.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "husky": "^2.3.0",
+    "prettier": "^1.17.1",
+    "prettier-eslint": "^8.8.2"
+  }
+}
