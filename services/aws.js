@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable prefer-promise-reject-errors */
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk'),
+  { getCommitFromLabel, isTwoMinutesApart } = require('../helper');
 
 // change to your region
 AWS.config.update({ region: 'us-east-1' });
@@ -66,10 +67,30 @@ exports.checkIfMasterAndDeployInfo = () =>
                 }
 
                 elasticbeanstalk.describeApplicationVersions(
-                  { ApplicationName: applicationNameTag.Value, MaxRecords: 1 },
+                  { ApplicationName: applicationNameTag.Value, MaxRecords: 2 },
                   (appVerError, appData) => {
                     if (appVerError) {
                       return reject(`Describe application versions failed with ${appVerError}`);
+                    }
+                    if (
+                      appData &&
+                      appData.ApplicationVersions &&
+                      isTwoMinutesApart(appData.ApplicationVersions[0].DateUpdated)
+                    ) {
+                      return reject('Skipping since it seems not to be a deploy');
+                    }
+                    if (
+                      appData &&
+                      appData.ApplicationVersions &&
+                      appData.ApplicationVersions.length > 1 &&
+                      getCommitFromLabel(appData.ApplicationVersions[0].VersionLabel) ===
+                        getCommitFromLabel(appData.ApplicationVersions[1].VersionLabel)
+                    ) {
+                      return reject(
+                        `Skipping since there was no commit changes between ${getCommitFromLabel(
+                          appData.ApplicationVersions[0].VersionLabel
+                        )} and ${getCommitFromLabel(appData.ApplicationVersions[1].VersionLabel)}`
+                      );
                     }
                     return resolve(appData.ApplicationVersions[0]);
                   }
